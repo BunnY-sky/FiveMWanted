@@ -1,0 +1,49 @@
+name: Build FiveMWanted
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Windows EXE
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore FiveMWanted.csproj
+
+      - name: Publish
+        run: >
+          dotnet publish FiveMWanted.csproj
+          -c Release
+          -r win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -o publish
+
+      - name: Create ZIP
+        shell: powershell
+        run: |
+          Compress-Archive `
+            -Path "publish\*" `
+            -DestinationPath "FiveMWanted-Windows-x64.zip"
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: FiveMWanted-Windows-x64
+          path: FiveMWanted-Windows-x64.zip
+          if-no-files-found: error
