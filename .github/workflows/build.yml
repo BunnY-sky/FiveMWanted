@@ -1,49 +1,47 @@
-name: Build FiveMWanted
+name: Build FiveMWantedLighting
 
-on:
+'on':
   push:
     branches:
       - main
-      - master
   workflow_dispatch:
 
 jobs:
   build:
-    name: Build Windows EXE
+    name: Build Windows x64
     runs-on: windows-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup .NET
+      - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore
-        run: dotnet restore FiveMWanted.csproj
-
-      - name: Publish
-        run: >
-          dotnet publish FiveMWanted.csproj
-          -c Release
-          -r win-x64
-          --self-contained true
-          -p:PublishSingleFile=true
-          -p:IncludeNativeLibrariesForSelfExtract=true
-          -o publish
-
-      - name: Create ZIP
-        shell: powershell
+      - name: Run build.ps1
+        shell: pwsh
         run: |
-          Compress-Archive `
-            -Path "publish\*" `
-            -DestinationPath "FiveMWanted-Windows-x64.zip"
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          .\build.ps1
 
-      - name: Upload EXE
+      - name: Check build
+        shell: pwsh
+        run: |
+          if (!(Test-Path "publish\FiveMWantedLighting.exe")) {
+            Write-Error "FiveMWantedLighting.exe wurde nicht erstellt."
+            exit 1
+          }
+
+          Write-Host "Build erfolgreich!"
+          Write-Host ""
+          Write-Host "Dateien in publish:"
+          Get-ChildItem "publish" -Recurse
+
+      - name: Upload build
         uses: actions/upload-artifact@v4
         with:
-          name: FiveMWanted-Windows-x64
-          path: FiveMWanted-Windows-x64.zip
+          name: FiveMWantedLighting-Windows-x64
+          path: publish/
           if-no-files-found: error
