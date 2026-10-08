@@ -1,5 +1,5 @@
 $ErrorActionPreference = 'Stop'
-$project = Join-Path $PSScriptRoot 'External\FiveMWantedLighting.csproj'
+$project = Join-Path $PSScriptRoot 'FiveMWantedLighting.csproj'
 $out = Join-Path $PSScriptRoot 'publish'
 
 Write-Host '=== FiveM Wanted Lighting - Build ===' -ForegroundColor Cyan
